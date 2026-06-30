@@ -2,21 +2,25 @@
 
 > Date: 2026-06-30. Status: **design approved in brainstorming; ready for writing-plans.**
 > **Supersedes** [2026-06-29-fd-set-causal-bundle-design.md](2026-06-29-fd-set-causal-bundle-design.md)
-> (the front-door SCM). *Why the pivot:* BundleBench's own adversarial work falsifies the front-door
+> (the front-door SCM). *Why the pivot:* predecessor project's own adversarial work falsifies the front-door
 > spine — the textbook front-door is mis-specified for completion (a dominant direct seed→item path
 > exists; `frontdoor-adversarial-ruling.md`), the user-theme mediator is refuted (C4), and
 > popularity-deconfounding of co-occ collapses to prior art (Cadence) + a known negative (C3 sparse;
 > PPMI already normalizes). **CEC instead attacks co-occurrence's structural BLIND SPOT** —
 > cold/under-exposed items — where the causal/counterfactual framing is load-bearing rather than a relabel.
-> Scope: **bundle CONSTRUCTION**, **method-first**. Inherited givens, BundleBench paths, and external-number
+> Scope: **bundle CONSTRUCTION**, **method-first**. Inherited givens, predecessor project paths, and external-number
 > confidence tags carried over from the FD-Set spec's §1.5/§11.
 > Upstream: [research/promising-research-lines.md](../../../research/promising-research-lines.md),
 > [research/outputs/causal-recsys-bundle-construction.md](../../../research/outputs/causal-recsys-bundle-construction.md);
-> BundleBench at `/Users/anisiomlacerda/code/Bundle_construction` (`docs/FD-Set-contribution-overlap-eval.md`,
+> predecessor project at `/Users/anisiomlacerda/code/Bundle_construction` (`docs/FD-Set-contribution-overlap-eval.md`,
 > `literature_synopsis/{frontdoor-adversarial-ruling,novelty-critique}.md`, `ideas/candidate_directions_backlog.md`).
 > Working name **CEC** (rename welcome).
+> **The predecessor project is UNPUBLISHED — do NOT cite it.** Its established results (C1–C4 / F1–F10,
+> the diagnostics, the gate, SetCompleter) are used here **only** to avoid overlap/double-claiming and to
+> reuse code; they are inherited internal givens, not citable prior art. In any paper draft, these are our
+> own in-progress results, framed accordingly.
 
-## 1. Goal & the bar (inherited from BundleBench — cite, do not re-claim)
+## 1. Goal & the bar (inherited from the predecessor project — do NOT re-claim or overlap)
 
 A causal/counterfactual **bundle-completion method** that wins where the dominant baseline is
 **structurally blind** — cold/under-exposed items — verified by an exposure-shift completion evaluation.
@@ -35,9 +39,10 @@ complementarity = co-consumption under **`do(uniform exposure)`**. Split by item
 - **Cold/under-exposed items:** `do`-counterfactual ≫ factual; **co-occ and DDBC are structurally
   blind** (co-occ has too few/zero co-stats; DDBC has no RVQ code). **All the opportunity is here.**
 
-## 1.5 Relationship to BundleBench (inherited vs new)
+## 1.5 Relationship to the predecessor project (overlap-avoidance — unpublished, NOT citable)
 
-**Inherited (F1–F10) — cite as prior own work; reuse/port, never re-derive.** Same ledger as the FD-Set
+**Inherited (F1–F10) — the predecessor project's internal, UNPUBLISHED results; reuse/port to avoid
+overlap, never re-derive or double-claim.** Same ledger as the FD-Set
 spec §1.5. The ones CEC leans on most:
 - **F3a (decisive pre-evidence):** the content SetCompleter is *the only method that beats co-occ
   full-catalog* (on Spotify, 768-d CLHE); ID-only ablation 0.085→0.038 loses (p=5.8e-65). → content is a
@@ -158,10 +163,10 @@ seed S ─► content-augmented retrieval ──► candidate set (incl. COLD it
 > falsification (re-analysis of owned results) and gates the GPU spend on M1; do it before building the DR
 > completer. M2 follows only if M1's go/no-go passes.
 
-## 9. Reusable assets (port from BundleBench — real paths)
+## 9. Reusable assets (port from predecessor project — real paths)
 Source: `/Users/anisiomlacerda/code/Bundle_construction/src/causalbr/`. **Vendored already in this repo
 (`code/reference/`):** `ranking_metrics.py`, `significance.py`, `ddbc_decode.py`, `reranker.py`, `fusion.py`.
-**To port (exist in BundleBench, not here):**
+**To port (exist in predecessor project, not here):**
 - **Outcome model / cold:** `recovery/set_completer.py` (+ checkpoints `models/setcompleter_{spotify90,pog}.pt`).
 - **Gate:** `causal/gate.py` (ObservableGate), `model/gate.py`.
 - **Exposure / cold-slice eval:** `eval/popularity.py`, `eval/popularity_shift.py`, `eval/lift.py`
@@ -183,8 +188,8 @@ cold-slice builder (if not already covered by `popularity_shift.py`), Cadence-UA
 - Spotify-MPD obtainable under license in time? (access risk — POG/MealRec+ fallback.)
 
 ## 11. References & verification confidence
-Inherited BundleBench findings (C1–C4 / F1–F10) — see the FD-Set spec §1.5 and `docs/findings/*`,
-`docs/learnings/*`, `docs/baselines/ddbc-repro-spec.md`, and BundleBench's `literature_synopsis/*` +
+Inherited predecessor project findings (C1–C4 / F1–F10) — see the FD-Set spec §1.5 and `docs/findings/*`,
+`docs/learnings/*`, `docs/baselines/ddbc-repro-spec.md`, and predecessor project's `literature_synopsis/*` +
 `ideas/candidate_directions_backlog.md` (#3 counterfactual-completion eval, #4 cold-item generalization,
 #8 observable gate — CEC's seeds). **High-confidence external:** DDBC ρ=100 protocol (repo `evaluator.py`),
 CLHE (arXiv 2310.18770), Bundle-MLLM (arXiv 2407.11712), DieT (arXiv 2411.19107, scope verified). **Verified

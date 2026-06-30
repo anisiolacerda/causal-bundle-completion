@@ -1,17 +1,17 @@
 # FD-Set — A Front-Door SCM for Causal Bundle Construction (Design Spec)
 
-> Date: 2026-06-29 (rev. 2026-06-30: construction-only **+ BundleBench overlap re-frame**).
+> Date: 2026-06-29 (rev. 2026-06-30: construction-only **+ predecessor project overlap re-frame**).
 > Status: **SUPERSEDED (2026-06-30) by**
 > [2026-06-30-cec-counterfactual-exposure-completion-design.md](2026-06-30-cec-counterfactual-exposure-completion-design.md).
-> *Why:* BundleBench's own `frontdoor-adversarial-ruling.md` shows the textbook front-door is mis-specified
+> *Why:* predecessor project's own `frontdoor-adversarial-ruling.md` shows the textbook front-door is mis-specified
 > for completion (dominant direct seed→item path); the theme mediator is refuted (C4); popularity-deconfounding
 > of co-occ collapses to prior art (Cadence) + a known negative (C3 sparse / PPMI). Kept for the inherited-vs-new
 > overlap ledger (§1.5) and the pivot rationale. **Read CEC for the active design.**
 > **Scope:** bundle **CONSTRUCTION** only; ranking deferred (§3.3, §5.5).
-> **Overlap re-frame:** this project already owns the BundleBench D&B contributions (C1–C4), the
+> **Overlap re-frame:** this project already owns the predecessor project D&B contributions (C1–C4), the
 > full-catalog harness, the baselines, the diagnostic suite, and a (refuted) causal stack. FD-Set must
 > **inherit and cite** those, not re-claim them. The inherited/new split is §1.5; the honest residual
-> novelty is §1.6. Source of the overlap ledger: the "FD-Set vs BundleBench" evaluation (2026-06-30).
+> novelty is §1.6. Source of the overlap ledger: the "FD-Set vs predecessor project" evaluation (2026-06-30).
 > Upstream: [research/promising-research-lines.md](../../../research/promising-research-lines.md),
 > [research/outputs/causal-recsys-bundle-construction.md](../../../research/outputs/causal-recsys-bundle-construction.md).
 > Inherited constraints/findings: [docs/findings/00-SUMMARY.md](../../findings/00-SUMMARY.md),
@@ -26,7 +26,7 @@ A new causal-inference method for **bundle construction** (seed → complete a s
 construction clears the bar (§5.5). The model is a Structural Causal Model whose construction
 `do`-operator is active and whose ranking `do`-operator is reserved for later.
 
-**The bar — *inherited from BundleBench*, not established by FD-Set (cite C1–C3):**
+**The bar — *inherited from predecessor project*, not established by FD-Set (cite C1–C3):**
 - Full-catalog evaluation; the shortlist (ρ=100) protocol over-claims and *reverses* method rankings
   (**C1/F2**: the pool contains the ground truth; negatives are popularity-trivial).
 - Plain **co-occurrence already beats DDBC full-catalog** and beats the whole learned family on DDBC's
@@ -49,13 +49,13 @@ guidance on a set-level diffusion recommender but with a **global learned weight
 anti-pattern). **DieT** ("Headache to Overstock?", arXiv 2411.19107) debiases popularity in bundle
 construction **non-causally** — the only *positive* popularity-debiasing signal is external and non-causal.
 
-## 1.5 Relationship to BundleBench (inherited vs new — read before claiming anything)
+## 1.5 Relationship to predecessor project (inherited vs new — read before claiming anything)
 
 **Inherited contributions/findings (F1–F10) — already this project's work; cite, do not re-derive:**
 
 | id | inherited finding | key numbers |
 |---|---|---|
-| F1 | BundleBench artifact: full-catalog protocol + reference baselines + corrected leaderboard + diagnostic suite (the D&B contribution) | — |
+| F1 | predecessor project artifact: full-catalog protocol + reference baselines + corrected leaderboard + diagnostic suite (the D&B contribution) | — |
 | F2 (**C1**) | Eval-protocol critique + dual-protocol prescription | DDBC F1 0.30→**0.033** full-catalog (~9×); popularity hit@1 0.30 (ρ=100) vs 0.024 (full) ~13× |
 | F3 (**C2**) | Trivial co-occ beats SOTA generative decode + whole learned family, full-catalog | co-occ>DDBC Spotify 0.053 vs 0.033 (p=2.1e-34), POG 0.139 vs 0.074 (p=5.4e-16); SASRec loses on 5 catalogs |
 | F3a | Content ≠ complementarity | SetCompleter wins only on Spotify (768-d CLHE); ID-only ablation 0.085→0.038 (loses, p=5.8e-65) |
@@ -68,8 +68,8 @@ construction **non-causally** — the only *positive* popularity-debiasing signa
 | F9 | DDBC reproduction + trained checkpoints (Spotify-90 **and** POG); DDBC eval = cosine-NN of CLHE feats, not likelihood | F1 0.298/0.302 Spotify, 0.135 POG |
 | F10 | Methodological learnings: forced-global load-bearing displaced accuracy 3× → gate/decode-path; proxy substitutability; **spectral-energy regime criterion** (top-64 energy predicts collab-proxy payoff, ≈10–40%); gate-g validated | 3× displacement; Youshu 39.5%→helps, NetEase/iFashion <10%→no |
 
-**Code provenance (this repo vs BundleBench).** Only `code/reference/{ranking_metrics, significance,
-ddbc_decode, reranker, fusion}.py` are **vendored here**. The rest of the BundleBench tree (the diagnostic
+**Code provenance (this repo vs predecessor project).** Only `code/reference/{ranking_metrics, significance,
+ddbc_decode, reranker, fusion}.py` are **vendored here**. The rest of the predecessor project tree (the diagnostic
 suite, the causal stack, the other baselines, set_metrics, loaders, stage scripts, DDBC checkpoints)
 lives in the predecessor project and must be **ported** — *not rebuilt, and not assumed already present
 in this repo*. "Reuse" below means "port the existing module," never "re-derive."
@@ -206,12 +206,12 @@ Spotify/Spotify_sparse; keep POG/POG_dense (+ MealRec+).
 ### 5.4 Experimental protocol
 - **Metrics:** full-catalog Recall@K / NDCG@K (CLHE-comparable Recall@20/NDCG@20), Hit@1, F1, Jaccard,
   per-example variants — **reuse `ranking_metrics.py` / set_metrics + `significance.py`**.
-- **Dual-protocol reporting (this is BundleBench's C1, NOT an FD-Set contribution):** report every method
-  under BundleBench's full-catalog protocol **and** the shortlist protocols (DDBC ρ=100, Bundle-MLLM
+- **Dual-protocol reporting (this is predecessor project's C1, NOT an FD-Set contribution):** report every method
+  under predecessor project's full-catalog protocol **and** the shortlist protocols (DDBC ρ=100, Bundle-MLLM
   10-MCQ). FD-Set *uses* C1; it does not contribute it. DDBC exact cells via the reproduced repo (its PDF
   is CAPTCHA-walled).
 - **Inertness / intervention battery — reuse the *shipped* diagnostics (F6/F7), do not re-implement:**
-  - **`do(T)` sampler-noise null (τ@0)** — *introduced in BundleBench (C4/F6)*; here **applied** to the
+  - **`do(T)` sampler-noise null (τ@0)** — *introduced in predecessor project (C4/F6)*; here **applied** to the
     front-door term. The front-door reweight must push **τ0_flip ≫ τ0_null ≈ 99 %**. Cadence runs no such
     flip — that is the differentiation, but the *diagnostic is prior own work*.
   - **3-part inertness report** (ablation Δ, set-correlation, gradient-flow + load-bearing gate) — the
@@ -234,7 +234,7 @@ Spotify/Spotify_sparse; keep POG/POG_dense (+ MealRec+).
 ## 6. Novelty & differentiation (construction)
 | Prior art | FD-Set differentiator |
 |---|---|
-| Cadence (item-item co-occ deconfounding, diversity, no flip-test) | set/decode-level **front-door** estimand on a constructor; we **apply BundleBench's `do(T)` flip** (Cadence runs none); completion not diversity; Cadence-UACR is a baseline |
+| Cadence (item-item co-occ deconfounding, diversity, no flip-test) | set/decode-level **front-door** estimand on a constructor; we **apply predecessor project's `do(T)` flip** (Cadence runs none); completion not diversity; Cadence-UACR is a baseline |
 | A2G-DiffRec (global decode guidance, fairness) | **observable-gated** (per-slot, reuses gate-g), formal front-door estimand, complementarity not long-tail |
 | DDBC / Bundle-MLLM (non-causal, shortlist) | causal front-door decode-path term + **full-catalog eval (C1)** |
 | DieT (non-causal long-tail debiasing) | causal identification + decode-path placement |
@@ -252,7 +252,7 @@ Spotify/Spotify_sparse; keep POG/POG_dense (+ MealRec+).
 | Spotify-MPD access prohibited | POG/MealRec+ fallback | blocked → drop Spotify, keep POG pillar |
 
 ## 8. Milestones (construction)
-- **M0 — re-scoped (most assets inherited).** Port the BundleBench harness + baselines + diagnostics +
+- **M0 — re-scoped (most assets inherited).** Port the predecessor project harness + baselines + diagnostics +
   DDBC checkpoints into this repo, then **add only the genuinely-missing pieces**: the **POG_dense /
   Spotify_sparse** variant splits, the **Cadence-UACR** baseline, an **HF `xhLiu/BundleConstruction`
   puller**, and packaged single-callable wrappers for shortlist-inflation + popularity-triviality. *Do
@@ -269,9 +269,9 @@ Spotify/Spotify_sparse; keep POG/POG_dense (+ MealRec+).
 > inherited harness/baselines/diagnostics, add the 4 missing M0 pieces, and build the Phase-1 front-door
 > reranker, ending at the go/no-go gate. M2–M3 are planned *after* M1 passes.
 
-## 9. Reusable assets (port from BundleBench; vendored subset noted)
+## 9. Reusable assets (port from predecessor project; vendored subset noted)
 **Vendored in this repo (`code/reference/`):** `ranking_metrics.py`, `significance.py`, `ddbc_decode.py`,
-`reranker.py`, `fusion.py`. **To port (exist in BundleBench, not here):** set_metrics; the baseline family
+`reranker.py`, `fusion.py`. **To port (exist in predecessor project, not here):** set_metrics; the baseline family
 (popularity, co-occ, item-kNN, PPMI-SVD, content SetCompleter, SASRec); the **diagnostic suite**
 (`theme_contrast.py`/`do(T)` null, `inertness.py` 3-part report, `oracle_ceiling.py`, `loadbearing_driver.py`,
 `hsic_permutation.py`); the **causal stack** (`gate.py`/ObservableGate, `sdpp_selector.py`, `theme_ivae.py`,
@@ -290,7 +290,7 @@ Spotify/Spotify_sparse; keep POG/POG_dense (+ MealRec+).
 - Spotify-MPD obtainable under license in time? (access risk.)
 
 ## 11. References & verification confidence
-**Inherited BundleBench findings (this project's prior work):** C1–C4 / F1–F10 — see §1.5;
+**Inherited predecessor project findings (this project's prior work):** C1–C4 / F1–F10 — see §1.5;
 documented in `docs/findings/00-SUMMARY.md`, the `docs/findings/2026-06-2*` stage records,
 `docs/learnings/LEARNINGS-from-bundle-ranking-project.md`, `docs/baselines/ddbc-repro-spec.md`.
 **Verified verbatim / from primary tables (high):** DDBC eval protocol (repo `evaluator.py`, ρ=100);
