@@ -1,6 +1,25 @@
-.superpowers/
+# PDFs kept locally (refs/), not committed — keep git lean
+*.pdf
+
+# python
 __pycache__/
-*.pyc
+*.py[cod]
 .pytest_cache/
 *.egg-info/
 .venv/
+venv/
+.ipynb_checkpoints/
+
+# SDD scratch (subagent-driven-development ledger + briefs)
+.superpowers/
+
+# data / models / logs
+data/
+models/
+logs/
+*.pt
+
+# os / editor
+.DS_Store
+.vscode/
+.idea/
