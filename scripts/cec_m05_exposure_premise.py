@@ -16,7 +16,7 @@ from scipy.sparse import csr_matrix
 import torch
 
 from causalbr.diffusion.bundle_dataset import load_bundles
-from causalbr.recovery.set_completer import setcompleter_full_scores, train_set_completer
+from causalbr.recovery.set_completer import setcompleter_full_scores
 from causalbr.eval.significance import paired_wilcoxon
 
 import sys
