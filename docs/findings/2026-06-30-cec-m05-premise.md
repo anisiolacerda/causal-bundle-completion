@@ -71,8 +71,44 @@ monotone-decreasing** (`hit1_delta_monotone_decreasing = false`). The pre-regist
   is cheap (Task 6 of the plan) but not required to read the NO-GO, since the Spotify hit@20 pattern is
   unambiguous and the pre-registered hit@1 rule already fails.
 
-## Bottom line
-The cheap M0.5 falsification did exactly its job: it refuted the CEC premise **before** any port or GPU
-training. Recommendation: do not build M1; revisit the core bet (per the spec's risk table) with the
-honest constraint that cold-item completion has a low absolute ceiling and the real content edge is
-warm-weighted.
+## Confirmation: MealRec+ L (dense regime, different domain)
+
+POG raw data was not available locally (HF cache was an empty stub), so the cross-check ran on
+**MealRec+ L** (food; n_items = 10,589 — the **dense** regime, the opposite of sparse Spotify), present
+locally with content embeddings. No SetCompleter checkpoint exists for MealRec, so it was **retrained**
+(20 epochs, seed 0) on `item_emb.pt`; item exposure computed per item from the train meals. Runner:
+`scripts/cec_m05_mealrec.py`; result: `results/cec/m05/mealrec_l.json` (n_test = 1,181, one gt per test).
+
+**Overall (content − co-occ): hit@1 = −0.151; hit@20 = −0.643.** On dense data, content LOSES to
+co-occurrence outright.
+
+**hit@20 per exposure bin:**
+
+| bin | item exposure | n | content | co-occ | Δ (content−cooc) | p |
+|---|---|---|---|---|---|---|
+| 0 (coldest) | ≤ 1 | 12 | 0.0833 | 0.0000 | +0.0833 | 0.50 (n.s.) |
+| 1 | 1–2 | 23 | 0.0000 | 0.2609 | −0.2609 | 1.0 |
+| 2 | 2–4 | 32 | 0.0000 | 0.1563 | −0.1563 | 1.0 |
+| 3 | 4–13 | 127 | 0.0000 | 0.3622 | −0.3622 | 1.0 |
+| 4 (hottest) | 13–795 | 987 | 0.0456 | **0.7579** | **−0.7123** | 1.0 |
+
+This **confirms the NO-GO via a different mechanism.** On the dense catalog, co-occurrence dominates
+everywhere (hit@20 = 0.76 in the head) and content barely scores at all — exactly the project's C3/F4 law
+(co-occ wins dense; content ≠ complementarity; retrieve-rerank only transfers to dense). Content's *only*
+advantage is on the 12 coldest items (+0.083), which is **not significant** (n = 12, p = 0.50). Caveat:
+SetCompleter was retrained modestly (20 epochs); a stronger content model could raise its absolute
+numbers, but co-occ's dense dominance and the absence of a *significant* cold-item content win are the
+robust, C3-consistent conclusion.
+
+## Bottom line (confirmed across two datasets / two density regimes)
+The cheap M0.5 falsification did exactly its job — it refuted the CEC premise **before** any port or GPU
+training, on **both** datasets:
+- **Sparse (Spotify-90):** content's edge over co-occ is real but **warm-weighted** (Δ grows with
+  exposure; top bin p = 1e-17). Cold-gating captures the smallest part.
+- **Dense (MealRec+ L):** content **loses to co-occ** everywhere; the only cold-item edge is tiny and
+  **not significant**. Cold-gating captures nothing.
+
+In neither regime is there a large, significant cold-slice content/causal advantage to gate on — the core
+CEC bet. **Recommendation: do not build M1; revisit the core bet** (per the spec's risk table), keeping the
+honest, now-twice-confirmed constraints that (a) cold-item completion has a low absolute ceiling, and
+(b) co-occurrence is hard to beat — warm-weighted in the best case (sparse), dominant in the worst (dense).
