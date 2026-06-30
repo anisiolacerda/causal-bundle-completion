@@ -1,7 +1,12 @@
 # FD-Set — A Front-Door SCM for Causal Bundle Construction (Design Spec)
 
 > Date: 2026-06-29 (rev. 2026-06-30: construction-only **+ BundleBench overlap re-frame**).
-> Status: **design in brainstorming review.**
+> Status: **SUPERSEDED (2026-06-30) by**
+> [2026-06-30-cec-counterfactual-exposure-completion-design.md](2026-06-30-cec-counterfactual-exposure-completion-design.md).
+> *Why:* BundleBench's own `frontdoor-adversarial-ruling.md` shows the textbook front-door is mis-specified
+> for completion (dominant direct seed→item path); the theme mediator is refuted (C4); popularity-deconfounding
+> of co-occ collapses to prior art (Cadence) + a known negative (C3 sparse / PPMI). Kept for the inherited-vs-new
+> overlap ledger (§1.5) and the pivot rationale. **Read CEC for the active design.**
 > **Scope:** bundle **CONSTRUCTION** only; ranking deferred (§3.3, §5.5).
 > **Overlap re-frame:** this project already owns the BundleBench D&B contributions (C1–C4), the
 > full-catalog harness, the baselines, the diagnostic suite, and a (refuted) causal stack. FD-Set must
