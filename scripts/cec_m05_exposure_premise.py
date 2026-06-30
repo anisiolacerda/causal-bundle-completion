@@ -79,7 +79,7 @@ def main():
     edges = exposure_bin_edges(exposure, n_bins=args.n_bins)
     B = item_bundle_incidence(train, n_items)
 
-    model = torch.load(args.ckpt, weights_only=False)
+    model = torch.load(args.ckpt, weights_only=False, map_location="cpu")
     model.eval()
 
     # records keyed by gt item: exposure-bin + per-method hit@k / rank
