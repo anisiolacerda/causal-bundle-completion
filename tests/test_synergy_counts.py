@@ -1,6 +1,7 @@
 import numpy as np
 from synergy.counts import (
     item_bundle_incidence, bundles_with, counts_over_j, cond_prob, cooc_score,
+    ppmi_score,
 )
 
 # 4 items, 4 bundles. item 3 appears ONLY with {0,1} together.
@@ -39,3 +40,9 @@ def test_cooc_score_masks_observed():
     s = cooc_score(B, [0, 1], N_ITEMS)
     assert s[0] == -np.inf and s[1] == -np.inf   # observed masked
     assert s[3] > s[2]                            # 3 co-occurs with {0,1} more than 2 does
+
+def test_ppmi_score_masks_observed_and_orders():
+    B = item_bundle_incidence(BUNDLES, N_ITEMS)
+    s = ppmi_score(B, [0, 1], N_ITEMS)
+    assert s[0] == -np.inf                        # observed masked
+    assert s[3] > s[2]                            # item 3 co-occurs with {0,1} more than item 2

@@ -41,6 +41,9 @@ def cond_prob(B: csr_matrix, cond_items: list[int], n_bundles: int) -> np.ndarra
     """P(j | all cond_items present) per item j, Laplace-smoothed (+1 / +n_items).
 
     cond_items == [] -> marginal P(j) over all bundles.
+    Note: n_bundles is used ONLY for the marginal case (cond_items == []); when
+    cond_items is non-empty the denominator uses the count of qualifying bundles
+    (i.e. len(bundles_with(B, cond_items))), not n_bundles.
     """
     n_items = B.shape[0]
     if not cond_items:
