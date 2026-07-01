@@ -1,83 +1,101 @@
-# Promising research lines (FILLED — 2026-06-28 deep sweep)
+# Promising research lines (RE-RANKED — 2026-07-01 brainstorm)
 
-> Populated by the `causal-recsys-bundle-construction` sweep. Full landscape + per-paper evidence:
-> [outputs/causal-recsys-bundle-construction.md](outputs/causal-recsys-bundle-construction.md);
-> provenance + citation verification: [outputs/causal-recsys-bundle-construction.provenance.md](outputs/causal-recsys-bundle-construction.provenance.md).
-> The pre-seeded hypotheses L1–L4 below were **validated/refuted against the literature** (results inline).
+> Re-ranked after the 0/2-bets pattern (FD-Set killed at design = dead end #3; CEC killed by M0.5 across
+> 2 datasets = dead end #4). Reconciled with the 2026-06-28 sweep
+> ([outputs/causal-recsys-bundle-construction.md](outputs/causal-recsys-bundle-construction.md)) and the
+> four surveys in `refs/`. Full design + falsification gates:
+> [docs/superpowers/specs/2026-07-01-causal-synergy-bundle-construction-design.md](../docs/superpowers/specs/2026-07-01-causal-synergy-bundle-construction-design.md).
+> Kickoff prompt that drove this: [01-brainstorm-kickoff-causal-construction-lines.md](01-brainstorm-kickoff-causal-construction-lines.md).
 
-## Scoring rubric (per line)
+## The meta-lesson (governs the ranking)
 
-| criterion | meaning |
-|---|---|
-| **Novelty** | not already done in the causal-recsys / bundle literature. |
-| **Fit-to-data** | leverages signal we KNOW exists (co-occ / exposure / popularity), not user-theme (refuted). |
-| **Verifiability** | the causal term passes the inertness diagnostic (ablation / τ@0 / gradient-flow) **and a rank-inversion test** (a monotone reweight can change scores but not the ranking = inert). |
-| **Feasibility** | tractable vs DDBC + co-occ/retrieve-rerank baselines on our 3 datasets. |
-| **Bar-clearing** | plausibly beats co-occ/retrieve-rerank **full-catalog** (not the DDBC ρ=100 shortlist). |
+All four dead ends assumed the objective is **full-catalog, in-distribution completion accuracy**, for
+which **co-occurrence is optimal**. The escape is to **change the estimand/objective/distribution/
+deliverable** so co-occ is not the optimal baseline. Lines that do this are ranked highest. Decision this
+round: escape via a **new ESTIMAND — within-set synergy** (top), with the **LLM lane ranked fully** as an
+independent carried design.
 
-## Headline findings (what the sweep settled)
+## Dead ends — CLOSED (do not surface as promising)
 
-- **GAP CONFIRMED (both):** no set/bundle-level causal **estimand for construction**, and no causal
-  **generative/diffusion decoder** — verified across the field's own survey, both curated repos
-  (~70 papers, ~90% pointwise, 0 set-construction), and web search.
-- **NOVELTY DOWNGRADE (adversarial):** "deconfound co-occurrence against popularity" is **PRIOR ART** —
-  **Cadence** (arXiv 2512.17733) already does item-item co-purchase deconfounding excluding popularity
-  AND user attributes, full-catalog. Defensible novelty = **set-level + generative-decode-path +
-  intervention-verified + within-set interaction**. *A Cadence-UACR reranker is now a mandatory baseline.*
-- **MECHANISM EXISTS, NON-INERT:** PDA (popularity^γ at inference), MACR (TIE subtraction at decode),
-  D3 (decode-score edit in generative recsys), UpliftRec (set-CATE on decode via DP), OPCB (set-policy
-  gradient) — only their **combination** is unoccupied.
-- **IDENTIFIABILITY WALL:** MealRec & Spotify-MPD have no exposure logs; Spotify-MPD has no user ids →
-  uplift/IPS/IV/slate-OPE lines are unidentifiable as stated. Prefer observational contrasts with
-  declared assumptions.
+| # | dead end | why closed |
+|---|---|---|
+| 1 | user-theme `do(seed)` deconfounding | **INERT** at decode (flip θ ~2% vs ~99% sampler-noise null; oracle θ ≈ 0). |
+| 2 | popularity/exposure deconfounding of co-occ | **PRIOR ART** (Cadence 2512.17733) + PPMI-collapse + sparse-fail. Kills prior **S1/S2**. |
+| 3 | total-effect front-door over partial-bundle mediator | **MIS-SPECIFIED** (dominant direct seed→item path). |
+| 4 | cold-item / `do(uniform exposure)` completion | **LOW CEILING / WRONG SLICE** (M0.5; content edge warm-weighted, p=1e-17). |
 
-## Updated pre-seeded hypotheses (L1–L4: validate/refute)
+Also closed / down-weighted: whole popularity-deconfounding family (prior **S1 gated deconfounding
+reranker**, **S2 Set-PDA**); IPS/DR/uplift/IV/slate-OPE/OPCB (unidentifiable — no exposure logs,
+Spotify-MPD has no user ids); counterfactual-sequence augmentation (CauseRec/CASR/CLBR — bypassable);
+globally-forced decode guidance (A2G-DiffRec — global weight displaced clean accuracy 3×).
 
-- **L1 — Exposure/popularity deconfounding at the SET level:** *PARTIALLY REFUTED as novel.* The
-  estimand is sound and fits the data, but Cadence (2512.17733) already occupies item-item co-occ
-  deconfounding vs popularity. Survives **only** if lifted to the constructed-set / decode path with
-  `do()`-flip verification (→ becomes L1′ = lines #1/#2).
-- **L2 — Front-door / decode-path causal objective for generative construction:** *CONFIRMED novel &
-  open.* No causal estimand lives on a generative decode trajectory (D3 is a heuristic; Causal Prompting
-  is LLM-QA only; DMSG is non-causal). Highest-novelty, highest-risk (weak DDBC backbone) → line #2/#7.
-- **L3 — Counterfactual/uplift reranking (treatment = adding item j):** *CONFIRMED novel*, but
-  **unidentifiable as stated** (no exposure logs). Viable only re-stated as an observational
-  complementarity contrast → line #3.
-- **L4 — Observable-gated causal term:** *CONFIRMED & strongly supported.* Matches gate-g; A2G-DiffRec
-  (global weight) is evidence that the non-gated alternative hurts clean accuracy. → line #1 (top).
-- **L5 (from survey Future Directions):** 5.3 causality-aware GNN over the co-occ graph → line #10
-  (heavy, likely inert at readout — bottom-ranked).
+## Scoring rubric (kickoff §4; each line 1–5)
 
-## Ranked shortlist
+Escapes-wall · Novelty · Intervention-verifiable · Cheap-falsifiable · Identifiable-on-our-data · Feasibility.
 
-| rank | line | nov | fit | verif | feas | bar | total | notes |
-|---|---|---|---|---|---|---|---|---|
-| 1 | **Observable-gated completion-deconfounding reranker** (fire only on cold/exposure-imbalanced slots, over retrieve-rerank) | 4 | 4 | 4 | 4 | 4 | **20** | best realistic bar shot; gate-g; falsifiable up front |
-| 2 | **Set-PDA** (per-pick decode multiplier in a generative bundle decoder, observable-γ) | 4 | 5 | 4 | 4 | 3 | **20** | fills both gaps; risk = PPMI collapse + weak DDBC decode |
-| 3 | **Completion-uplift reranker** (select by do(add j) lift) | 5 | 4 | 3 | 3 | 4 | **19** | identifiability without exposure logs is the crux |
-| 4 | **Synergy-as-interaction decode term** (within-set interaction residual) | 5 | 4 | 3 | 2 | 3 | **17** | the Cadence differentiator; falsify residual≈0 first |
-| 5 | Joint-exposure pair-level deconfounder (control-function/IV) | 3 | 5 | 3 | 3 | 3 | **17** | Cadence prior-art + no instrument → PPMI-relabel risk |
-| 6 | Bundle-OPCB (off-policy set learning, factored main+residual) | 4 | 4 | 4 | 2 | 3 | **17** | needs logged set-propensities we lack |
-| 7 | Front-door-over-partial-bundle (partial bundle as mediator) | 5 | 3 | 3 | 2 | 3 | **16** | positivity/variance; unidentifiable-as-stated |
-| 8 | Substitute-set-confounder (factor-model co-occ, residualize at decode) | 3 | 4 | 3 | 3 | 2 | **15** | risk re-estimates popularity (= PPMI) |
-| 9 | Slate-OPE-as-objective (pseudoinverse slate value drives decoder) | 4 | 3 | 3 | 2 | 2 | **14** | additive-per-slot kills synergy; needs propensities |
-| 10 | Causal message-passing over co-occ graph (Future-Dir 5.3) | 5 | 3 | 2 | 2 | 2 | **14** | heavy GNN; edge term likely inert at readout |
-| — | ~~Counterfactual-sequence augmentation~~ | 2 | 2 | 1 | 4 | 2 | **11** | dead — augmentation only, bypassable |
+## Re-ranked lines
 
-> Lines 5/6/7/9 are **unidentifiable-as-stated on our datasets** (no exposure logs / no user ids / no
-> valid instrument). Kept for completeness; not shortlist candidates.
+| tier | line (lane) | esc | nov | ver | kill | id | feas | total | escapes-wall / cheap kill |
+|---|---|---|---|---|---|---|---|---|---|
+| 1 | **Within-set SYNERGY** (L-A/L-B) — non-additive `τ_syn(j\|S)=E[Y(S∪j)]−E[Y(S)]−E[Y(j)]+E[Y(∅)]` | 5 | 5 | 4 | 5 | 5 | 3 | **27** | new estimand co-occ can't represent / synergy-residual magnitude + rank-inversion vs PPMI |
+| 1 | **Anonymized-LLM complementarity** (L-F2) — "Corr2Cause mode", names denied | 4 | 4 | 5 | 5 | 5 | 4 | **27** | different signal source + test-dist / LLM-vs-PPMI r>0.7 + name-strip collapse |
+| 1.5 | **Partial-ID / bounds** (L-I) — Rosenbaum-Γ / Kallus-Zhou on `τ_syn` | 3 | 4 | 5 | 4 | 4 | 3 | **23** | reframes the claim / Γ-sweep bounds blow up to include 0 = kill. **Rigor layer for L-A, not standalone.** |
+| 2 | **Item-item DAG discovery** (L-E) — DAG is the deliverable, co-occ an input | 4 | 4 | 3 | 4 | 4 | 3 | **22** | co-occ not a competitor / edge-vs-PPMI Spearman>0.7 or >80% Jaccard or popularity-direction AUC |
+| 2 | **Distribution / OOD** (L-D) — temporal / cross-domain / genre-shift | 5 | 3 | 3 | 4 | 3 | 2 | **20** | wall is in-distribution only / co-occ-near-random-on-split check. Temporal feasible; cross-domain has NO ready shared-user benchmark. |
+| 3 | **Objective / reward** (L-C) — bundle-level `E[Y(B)]` off-policy/DTR | 5 | 4 | 3 | 3 | 1 | 2 | **18** | co-occ predicts popularity not reward / proxy-reward-vs-co-occ Spearman<0.7. **HARD-blocked: no reward/impression logs; needs causal simulator.** |
+| 3 | **Intent-mediated generation** (L-G) | 4 | 2 | 2 | 3 | 3 | 2 | **16** | different objective / mediation d-separation test on intent-annotated Amazon. Collapse-risk into dead-end #1; heavy prior art (AICL/Text2Bundle/MIDGN/**BunCa**). |
+| 3 | **Fairness / exposure objective** (L-H) | 5 | 2 | 3 | 3 | 4 | 3 | **20*** | wall gone by construction / rerank-vs-generation ablation. *Departs from accuracy goal; A2G-DiffRec/DifFaiRec turf — only if a fairness contribution is accepted. |
 
-## Hand-off: 3 candidate method designs → brainstorming → writing-plans
+`L-B interference` = the formal causal scaffolding for L-A (spillover / SUTVA-violation), not a separate
+line. `Gao §5.3 causal-GNN` = an architecture layer that pairs with L-E, not an estimand lane.
 
-1. **S1 — Observable-gated completion-deconfounding reranker** (safest bar-clearing; rides the winning
-   retrieve-rerank backbone; estimand identifiable without propensities via matched leave-one-out).
-2. **S2 — Set-PDA decode-path deconfounding** in a generative bundle decoder (highest novelty, fills
-   both gaps; per-slot observable-γ to defeat PPMI collapse; bar gated on full-catalog, not shortlist).
-3. **S3 — Within-set interaction (synergy) estimand** — the formal differentiator vs Cadence; runs an
-   **up-front falsification** (residual magnitude after popularity deconfounding) before decode
-   integration; rides S1 or S2.
+### Novelty landmines (mandatory to differentiate / baseline)
+Cadence-UACR (2512.17733, item-item pop-deconfounding — mandatory baseline); PDA/MACR/DICE/IPS-DR
+(pointwise deconfounding); UpliftRec/OPCB/Slate-PI-Swaminathan (set-level but additive value / need
+propensities); NCoRE (2103.11175 — interaction *estimation*, not construction); COR/CausPref/CausalDiffRec
+(representation-path OOD); DT-CDBR (only cross-domain BR); BunCa (closest causal-BR by name, item-level
+discriminative); Kiciman/Cai/Jiralerspong/Ban/LACR (LLM causal discovery — all FEED names, opposite of
+the anonymized move); DMSG/DiFashion (generative-BR substrate, non-causal); A2G-DiffRec (decode-path but
+globally-weighted = the anti-pattern).
 
-**Mandatory new baselines for any of the above:** raw co-occ, retrieve-then-rerank (PPMI-SVD),
-PPMI-normalized co-occ, **Cadence-UACR reranker**, DDBC (full-catalog, not ρ=100 shortlist).
-**Mandatory diagnostics:** ablation Δ, τ@0 / set-correlation vs the ~99% sampler-noise null,
-gradient-flow, and the **rank-inversion** test on the gated subpopulation.
+## Hand-off: 3 carried designs → writing-plans (each with its up-front CPU-minutes gate)
+
+Every design's **first implementation slice IS its falsification gate** (kill-or-proceed before any GPU),
+mirroring the M0.5 pattern that killed the last two bets cheaply.
+
+1. **DESIGN 1 (TOP → writing-plans first) — within-set synergy completion term + partial-ID bounds.**
+   Estimand `τ_syn(j|S)` (pairwise/low-order; higher-order deferred for positivity). Placement:
+   per-pick logit correction / non-additive seed-set→completion reranker (reuse predecessor
+   `recovery/reranker.py`), **NOT** the DDBC `cond_dim=128` FiLM slot. Regime: **dense |gt|≥2**
+   (MealRec+ H/L, POG_dense) — a small term cannot be load-bearing on |gt|=1 sparse (sampler variance
+   ~99%). Metric: full-catalog completion vs co-occ / PPMI / retrieve-rerank / Cadence-UACR / content
+   SetCompleter / CLHE / DDBC-full; ≥5 seeds, paired Wilcoxon. L-I bounds prove the gain is causal.
+   **GATE (CPU-min):** fit additive PPMI main effects → estimate `τ_syn` on held-out slice
+   (reuse `cec_m05_exposure_premise.py` + `src/cec`) → **KILL if** `|τ_syn|≈0` vs permutation null, OR
+   synergy ranking rank-equivalent to co-occ (Kendall/Spearman ≳0.9 = inert), OR the "large-τ-but-low-co-occ"
+   masked-complement slice is empty; plus additive-null placebo (product-of-marginals ⇒ τ≈0) and a
+   positivity/overlap pre-check. **GO** only on a non-trivial non-rank-equivalent residual.
+
+2. **DESIGN 2 — anonymized "Corr2Cause-mode" LLM item-item complementarity (L-F2).** Deny item names;
+   give only anonymized IDs + structural/behavioral context, so any lift over co-occ is provably not
+   memorized (name-stripped LLMs go to chance — Corr2Cause/parrots). Reranks co-occ candidates / feeds
+   Design 3. Sidesteps the identifiability wall (needs only names + relation queries).
+   **GATE (CPU-min + few-hundred LLM calls):** (1) LLM-score vs PPMI `r>~0.7` ⇒ KILL; (2) named-vs-anonymized
+   collapse ⇒ KILL if anonymized→chance and named≈co-occ; (3) contamination probe (verbatim-recall +
+   head/tail gradient + pre/post-cutoff split); (4) necessity-label self-consistency if L-F1 labels used.
+
+3. **DESIGN 3 — item-item complementarity DAG discovery (L-E), fed by Design 2.** DAG is the primary
+   deliverable (co-occ = input feature); CI-test / PC-FCI over incidence, seeded/pruned by Design-2
+   scores; optional causal-GNN over the DAG (Gao §5.3). Metric: OOD/temporal lift + explainability +
+   plausibility (NOT in-distribution completion alone). **GATE (CPU-min):** KILL if
+   `Spearman(edge, PPMI)>~0.7`, OR >80% Jaccard with top-k co-occ neighbors, OR edge direction predicted
+   by popularity ratio `P(j|i)/P(i|j)` alone.
+
+## Mandatory baselines & diagnostics (any empirical claim)
+
+- **Baselines:** raw co-occ, retrieve-then-rerank (PPMI-SVD), PPMI-normalized co-occ, **Cadence-UACR**
+  (adapt), content SetCompleter, CLHE (full-catalog anchor), DDBC (full-catalog, NOT ρ=100 shortlist).
+- **Diagnostics:** ablation Δ, τ@0 / set-correlation vs the ~99% sampler-noise null, gradient-flow, the
+  **rank-inversion** test, and a **`do()`-flip** wherever a causal term is claimed.
+- **Honesty guards:** full-catalog eval, ≥5 seeds, paired Wilcoxon, pre-registered thresholds, report
+  negatives plainly.
