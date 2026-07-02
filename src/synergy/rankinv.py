@@ -31,6 +31,8 @@ def rank_agreement(scores_a: np.ndarray, scores_b: np.ndarray,
     cand, a, b = cand[finite], a[finite], b[finite]
     if a.size < 3:
         return {"spearman": float("nan"), "kendall": float("nan"), "topk_jaccard": float("nan")}
+    if np.ptp(a) == 0 or np.ptp(b) == 0:
+        return {"spearman": float("nan"), "kendall": float("nan"), "topk_jaccard": float("nan")}
     sp = float(spearmanr(a, b).statistic)
     kt = float(kendalltau(a, b).statistic)
     kk = min(topk, a.size)

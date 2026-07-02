@@ -71,13 +71,10 @@ def main():
     rng = np.random.default_rng(args.seed)
     g = run_gate(train, obs, gt, n_items, ks=tuple(args.ks), topk=args.topk, rng=rng)
 
-    # residual vs null: one-sided paired Wilcoxon over per-instance tau_abs vs null
-    # (recompute paired arrays through run_gate is overkill; use the summary + a permutation p)
-    # permutation p: fraction of null instances whose tau_abs >= observed mean.
+    # Permutation p: compare the observed tau_abs_mean against R=19 fresh additivity-null
+    # draws' tau_abs_mean_null (see _tau_perm_p). tau_perm_p high => residual at/below the null.
     tau_perm_p = 1.0
     if g["n_instances"]:
-        # conservative: compare observed mean to null distribution mean via Wilcoxon on the
-        # per-instance arrays returned below; run_gate exposes them via re-run in strict mode.
         tau_perm_p = _tau_perm_p(train, obs, gt, n_items, args.topk, args.seed, g["tau_abs_mean"])
 
     # completion lift: paired Wilcoxon joint > cooc on hit@20
@@ -101,7 +98,7 @@ def main():
            "hit_full": {k: {"cooc_mean": g["hit"][k]["cooc_mean"],
                             "joint_mean": g["hit"][k]["joint_mean"]} for k in args.ks},
            "verdict": verdict}
-    os.makedirs(os.path.dirname(args.out), exist_ok=True)
+    os.makedirs(os.path.dirname(args.out) or ".", exist_ok=True)
     with open(args.out, "w") as f:
         json.dump(out, f, indent=2)
     print(json.dumps({"dataset": args.dataset, "n_instances": g["n_instances"],

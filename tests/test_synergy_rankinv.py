@@ -34,3 +34,10 @@ def test_rank_agreement_too_few_finite_returns_nan():
     cand = np.array([0, 1, 2, 3])
     r = rank_agreement(a, b, cand, topk=2)
     assert math.isnan(r["spearman"]) and math.isnan(r["kendall"]) and math.isnan(r["topk_jaccard"])
+
+def test_rank_agreement_constant_input_returns_nan():
+    import math
+    a = np.array([1.0, 1.0, 1.0, 1.0])   # constant scores -> correlation undefined
+    b = np.array([4.0, 3.0, 2.0, 1.0])
+    r = rank_agreement(a, b, np.array([0, 1, 2, 3]), topk=2)
+    assert math.isnan(r["spearman"]) and math.isnan(r["kendall"]) and math.isnan(r["topk_jaccard"])
