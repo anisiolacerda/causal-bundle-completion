@@ -28,9 +28,20 @@ def synergy_vectors(B: csr_matrix, obs_pair: tuple[int, int], n_bundles: int) ->
 
 
 def null_bundles_product_of_marginals(bundles, n_items, sizes, rng):
-    """Placebo: redraw each bundle's items independently from the item marginal (no replacement
-    within a bundle), preserving per-bundle size. Breaks any i-k-j interaction while keeping
-    marginals ~fixed -> the additivity null for the synergy estimator."""
+    """Placebo: redraw each bundle's items independently from the item marginal, preserving
+    per-bundle size. Breaks any i-k-j interaction while keeping marginals ~fixed -> the
+    additivity null for the synergy estimator.
+
+    Design note — ``replace=False`` is deliberate.
+    Bundles are *sets* of distinct items, so drawing a bundle's items without replacement
+    preserves (a) per-bundle size, (b) the set structure (no self-co-occurrence), and
+    (c) the item marginal distribution up to the within-bundle exclusion constraint.
+    This is a **size-conditioned marginal null**: each bundle is drawn from the item
+    marginal p conditioned on producing a set of exactly ``sz`` distinct items.
+    It is *not* i.i.d.-with-replacement; using replace=True would allow an item to appear
+    more than once in a single bundle, violating the set assumption and inflating variance.
+    The null breaks structured i–k–j interaction (synergy) while retaining realistic
+    bundle-size heterogeneity."""
     freq = np.zeros(n_items, dtype=float)
     for b in bundles:
         for it in b:
