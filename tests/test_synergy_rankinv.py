@@ -24,4 +24,13 @@ def test_rank_agreement_reversed_is_negative():
     cand = np.array([0, 1, 2, 3])
     r = rank_agreement(a, b, cand, topk=2)
     assert r["spearman"] < -0.9
+    assert abs(r["kendall"] + 1.0) < 1e-9  # fully reversed 4-element -> Kendall tau = -1.0
     assert r["topk_jaccard"] == 0.0      # disjoint top-2 => strong rank inversion
+
+def test_rank_agreement_too_few_finite_returns_nan():
+    import math
+    a = np.array([1.0, 2.0, -np.inf, -np.inf])   # only 2 finite candidates
+    b = np.array([2.0, 1.0, 5.0, 6.0])
+    cand = np.array([0, 1, 2, 3])
+    r = rank_agreement(a, b, cand, topk=2)
+    assert math.isnan(r["spearman"]) and math.isnan(r["kendall"]) and math.isnan(r["topk_jaccard"])
