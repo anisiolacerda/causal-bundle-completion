@@ -1,0 +1,42 @@
+{
+  "dataset": "mealrec_h",
+  "n_items": 4805,
+  "n_instances": 4677,
+  "topk": 200,
+  "seed": 0,
+  "metrics": {
+    "tau_abs_mean": 0.005259051008752964,
+    "tau_abs_mean_null": 0.007881955366442693,
+    "tau_perm_p": 1.0,
+    "rank": {
+      "spearman_mean": 0.1405835626505909,
+      "top20_jaccard_mean": 0.06204188883282186
+    },
+    "hit": {
+      "20": {
+        "cooc_mean": 0.6348086380158221,
+        "joint_mean": 0.9991447509087021,
+        "wilcoxon_p": 0.0
+      }
+    },
+    "masked_frac": 0.00042762454564892024,
+    "placebo_ok": false
+  },
+  "hit_full": {
+    "1": {
+      "cooc_mean": 0.1323497968783408,
+      "joint_mean": 0.6307462048321574
+    },
+    "20": {
+      "cooc_mean": 0.6348086380158221,
+      "joint_mean": 0.9991447509087021
+    }
+  },
+  "verdict": {
+    "verdict": "KILL",
+    "failed": [
+      "residual_at_null",
+      "placebo_miscalibrated"
+    ]
+  }
+}
