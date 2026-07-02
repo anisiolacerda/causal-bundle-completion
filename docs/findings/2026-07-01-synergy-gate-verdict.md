@@ -31,18 +31,29 @@ which was the whole novelty claim, adds nothing on top. The `rank` agreement (Sp
 Jaccard ≈ 0.06) confirms the joint ranking is not a monotone reweight of co-occ — but that reordering is
 driven by the additive conditional, not by `τ`.
 
+### Robustness recheck (independent, during adversarial review) — strengthens the KILL
+The obvious objection is that `tau_abs_mean_null > tau_abs_mean` is a **null-noise artifact**: the
+product-of-marginals null destroys `i–k` co-occurrence, so ~58% of null instances have an *empty*
+`{i,k}` qualifying cell, where `P(j|{i,k})` degenerates to the smoothing constant `1/n_items` and `|τ|`
+is mechanically inflated. Recomputing on the **fair subset** — only instances where BOTH the real and
+the null data have a non-empty `{i,k}` cell (removing the degenerate branch entirely) — gives observed
+`|τ| = 0.00197` vs null `0.00391` on mealrec_l: **observed is still ~half the null.** So the primary
+signal is NOT an empty-cell artifact; there is genuinely no non-additive signal above the floor. The
+KILL survives the fair comparison.
+
 ### Honest caveats (do not change the verdict)
+- **The two failed labels are correlated, not independent corroboration.** Both `residual_at_null` and
+  `placebo_miscalibrated` are driven by the single fact `τ_null > τ_obs` (via the 19-draw permutation and
+  the single-draw ratio respectively). Treat **`residual_at_null` as the primary and sufficient signal**
+  (`tau_perm_p = 1.0` = observed below ALL 19 null draws, far past the R=19 resolution floor of 0.05);
+  `placebo_miscalibrated` is the weaker, null-noise-sensitive restatement.
 - **Laplace smoothing** (`+1/+n_items`) shrinks all conditional probabilities, compressing `τ`. But it
   is NOT crushing signal broadly: the joint conditional is highly discriminative (hit@1 up to 0.76), and
   the same smoothing applies to the null, so the observed-vs-null comparison is fair. It is the
   non-additive part specifically that is ≈0.
-- **`placebo_miscalibrated`** (null `τ` > observed `τ`) is partly a null-noise artifact: product-of-
-  marginals bundles have sparser conditioning cells → noisier `τ` estimates. This weakens that specific
-  label, but the PRIMARY kill (`residual_at_null`, observed not exceeding the null) holds regardless of
-  null-noise: there is simply no synergy signal above the floor.
-- **`ConstantInputWarning`** (scipy, `rankinv.py:34`) fires on instances whose candidate scores are
-  constant → nan correlation, which is dropped by the finite-guard. Verdict unaffected; a guard against
-  constant input is a hygiene TODO (does not change any reported number).
+- **`ConstantInputWarning`** (scipy, `rankinv.py`) fires on instances whose candidate scores are
+  constant → nan correlation, which is dropped by the finite-guard. Verdict unaffected (byte-for-byte
+  reproduction confirmed with the warning present); a guard against constant input is a hygiene fix.
 
 ## Where this leaves the project
 
