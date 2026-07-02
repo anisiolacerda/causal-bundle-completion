@@ -28,6 +28,8 @@ def run_gate(train_bundles, test_obs, test_gt, n_items, *, ks=(1, 20), topk=200,
 
     # placebo (additivity null) incidence, same sizes
     sizes = [len(b) for b in train_bundles]
+    # Single placebo draw per run_gate call is intentional: the runner averages the
+    # null statistic over multiple run_gate calls with different rng seeds (permutation p).
     null_bundles = null_bundles_product_of_marginals(train_bundles, n_items, sizes, rng)
     Bn = item_bundle_incidence(null_bundles, n_items)
 
@@ -43,19 +45,23 @@ def run_gate(train_bundles, test_obs, test_gt, n_items, *, ks=(1, 20), topk=200,
 
         joint = v["joint"].copy()          # additive + tau == joint conditional P(j|{i,k})
         ra = rank_agreement(joint, cs, cand, topk=20)
-        if np.isfinite(ra["spearman"]):
+        if np.isfinite(ra["spearman"]) and np.isfinite(ra["topk_jaccard"]):
             sp_list.append(ra["spearman"]); jac_list.append(ra["topk_jaccard"])
 
         for g in gt:
             for k in ks:
                 hit[k]["cooc"].append(hit_at_k(cs, g, k))
                 hit[k]["joint"].append(hit_at_k(joint, g, k))
-            # masked-complement: gt has high tau but low co-occ rank
-            tau_g = v["tau"][g]
-            finite_tau = v["tau"][np.isfinite(v["tau"])]
-            hi_tau = np.isfinite(tau_g) and tau_g >= np.percentile(finite_tau, 90)
-            lo_cooc = item_rank(cs, g) > 100
-            masked.append(1.0 if (hi_tau and lo_cooc) else 0.0)
+        # masked-complement (per INSTANCE): does ANY gt item have high synergy
+        # (top-decile tau AMONG the co-occ CANDIDATES `cand`) yet low co-occ rank (>100)?
+        tau_cand = v["tau"][cand]
+        finite_tau_cand = tau_cand[np.isfinite(tau_cand)]
+        thresh = np.percentile(finite_tau_cand, 90) if finite_tau_cand.size else np.inf
+        inst_masked = any(
+            np.isfinite(v["tau"][g]) and v["tau"][g] >= thresh and item_rank(cs, g) > 100
+            for g in gt
+        )
+        masked.append(1.0 if inst_masked else 0.0)
 
     return {
         "n_instances": len(inst),
